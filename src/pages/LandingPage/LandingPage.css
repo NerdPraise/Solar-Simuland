@@ -1,0 +1,27 @@
+.searchInput {
+  @apply rounded-lg bg-blue-50 border-transparent;
+}
+
+.searchWrapper {
+  @apply w-1/3 mb-5;
+}
+
+.projectFileWrapper {
+  @apply mt-16 flex justify-between -m-10;
+}
+
+.cardWrapper {
+  @apply w-1/3 px-10;
+}
+
+.projectCard {
+  @apply rounded-xl h-72 border-blue-100;
+}
+
+.fileIconImg {
+  @apply h-full flex py-14 justify-center items-center;
+}
+
+.projectCard .ant-card-body {
+  padding: 0;
+}

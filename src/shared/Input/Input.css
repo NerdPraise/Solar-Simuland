@@ -1,0 +1,3 @@
+.inputDefaultStyle {
+  @apply rounded-lg bg-blue-50 border-transparent;
+}

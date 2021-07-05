@@ -1,0 +1,25 @@
+.auth-loader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.spinner {
+  color: #ffad01;
+  font-size: 50px;
+  margin-top: 1em;
+}
+
+.ant-spin {
+  color: #ffad01;
+}
+
+.ant-spin-dot-item {
+  background-color: #ffad01;
+}
+
+.loading-screen-logo {
+  max-height: 70px;
+}

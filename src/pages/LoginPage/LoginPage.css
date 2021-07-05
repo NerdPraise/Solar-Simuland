@@ -1,0 +1,7 @@
+.loginWrapper .title {
+  @apply font-bold font-sans text-3xl mb-5;
+}
+
+.formSubmitBtn {
+  @apply w-full py-3 text-white bg-blue-800 mt-2 hover:bg-white hover:border hover:text-blue-500 hover:border-blue-400 duration-500 rounded-xl;
+}
