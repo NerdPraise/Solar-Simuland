@@ -40,6 +40,7 @@ class EngineerSerialiser(serializers.ModelSerializer):
 
 
 class LoadProfileSerializer(serializers.ModelSerializer):
+    loads = LoadSerializer(many=True, read_only=True)
     class Meta:
         model = LoadProfile
         fields = '__all__'

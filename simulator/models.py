@@ -1,6 +1,8 @@
 from django.core.validators import MaxLengthValidator
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.db.models.signals import post_save
+
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -50,7 +52,7 @@ class Load(models.Model):
     total_usage = models.FloatField(editable=False)
     inverter_efficiency = models.FloatField(blank=True, null=True, default=1.0)
     load_profile = models.ForeignKey(
-        'LoadProfile', on_delete=models.CASCADE, null=True)
+        'LoadProfile', related_name='loads', on_delete=models.CASCADE, null=True)
 
     def save(self, *args, **kwargs):
         if self.profile_type == 'AC':
@@ -68,5 +70,26 @@ class LoadProfile(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     name = models.CharField(max_length=120)
 
-    # def save(self, *args, **kwargs) -> None:
-    #     return super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        total = 0
+        for load in self.loads.all():
+            total += load.total_usage
+        self.total_demand = total
+        return super().save(*args, **kwargs)
+
+
+def calculate_total_load(sender, **kwargs):
+    print(kwargs)
+    total = 0
+    if kwargs['created']:
+        load_profile = kwargs['instance'].load_profile
+        loads = load_profile.loads.all()        
+        for load in loads:
+            total += load.total_usage
+        load_profile.total_demand = total
+        load_profile.save()
+
+
+post_save.connect(calculate_total_load, sender=Load)
+
+
