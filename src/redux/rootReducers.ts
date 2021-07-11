@@ -1,4 +1,5 @@
 import { combineReducers } from "redux"
+import { AuthState } from "../modules/auth/models"
 import authReducer from "../modules/auth/store/authReducer"
 
 export const rootReducer = combineReducers({
@@ -6,5 +7,5 @@ export const rootReducer = combineReducers({
 })
 
 export interface AppState {
-  auth: ""
+  auth: AuthState
 }

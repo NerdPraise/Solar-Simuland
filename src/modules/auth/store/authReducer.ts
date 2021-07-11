@@ -1,22 +1,22 @@
+import { StatusCode } from "../../../shared/helpers"
+import { AuthState } from "../models"
 import { ActionTypes, AuthActions } from "./actionTypes"
 
-interface LoginState {
-  isLoggedIn: boolean
-}
 
-const authInitialState: LoginState = {
+const authInitialState: AuthState = {
   isLoggedIn: false,
+  statusCode: StatusCode.INITIAL,
 }
 
 const authReducer = (
-  state: LoginState = authInitialState,
+  state: AuthState = authInitialState,
   action: AuthActions
 ) => {
   switch (action.type) {
     case ActionTypes.LOGIN: {
-      const { isLoggedIn } = action.payload
+      const { isLoggedIn, statusCode } = action.payload
 
-      return { ...state, isLoggedIn }
+      return { ...state, isLoggedIn, statusCode }
     }
     default:
       return state

@@ -1,3 +1,23 @@
 .inputDefaultStyle {
   @apply rounded-lg bg-blue-50 border-transparent;
 }
+
+.loginForm .ant-form-item {
+  flex-direction: column;
+}
+
+.loginForm .ant-form-item-label label::after {
+  content: '';
+}
+
+.loginForm .ant-form-item-label {
+  @apply w-full text-left max-w-full;
+}
+
+.loginForm .ant-form-item-label label {
+  @apply w-full;
+}
+
+.loginForm .ant-form-item-control {
+  @apply w-full;
+}

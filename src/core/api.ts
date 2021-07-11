@@ -2,7 +2,7 @@ import Axios from "axios"
 
 const baseURL = process.env.REACT_APP_BASE_URL
 
-export const AuthenticatedAPI = Axios.create({
+const AuthenticatedAPI = Axios.create({
   baseURL,
   headers: {
     "content-type": "application/json",
@@ -22,3 +22,5 @@ AuthenticatedAPI.interceptors.request.use((apiConfig) => {
 
   return newConfig
 })
+
+export const API = AuthenticatedAPI

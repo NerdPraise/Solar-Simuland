@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { BrowserRouter, Switch, Route } from "react-router-dom"
+import { BrowserRouter, Switch, Route, Redirect} from "react-router-dom"
 
 import AuthLayout from "../core/layouts/AuthLayout/AuthLayout"
 import LandingPage from "../pages/LandingPage/LandingPage"
@@ -13,6 +13,8 @@ const IndexRouter: FC = () => (
       <Route path="/auth" component={AuthLayout} />
       <Route path="/login" component={LoginPage} />
       <Route path="/register" component={SignupPage} />
+
+      <Redirect from='' to='/login' />
     </Switch>
   </BrowserRouter>
 )
