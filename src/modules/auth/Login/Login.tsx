@@ -1,26 +1,46 @@
-import { FC } from "react"
-import { Form } from "antd"
+/* eslint-disable react-hooks/exhaustive-deps */
+import { FC, useEffect, useRef } from "react"
+import { Form, message } from "antd"
 import { bindActionCreators, Dispatch } from "redux"
 import { connect } from "react-redux"
-import { Link } from "react-router-dom"
+import { Link, withRouter } from "react-router-dom"
 
 import { LoginProps } from "../models"
 import { Input } from "../../../shared"
 import { AppState } from "../../../redux/rootReducers"
-import { login as loginActionCreator } from "../store/actions"
+import { login as loginActionCreator, clearStatusCode as clearStatusCodeAction } from "../store/actions"
+import { StatusCode, authErrorMessages } from "../../../shared/helpers"
 import "./Login.css"
 
 const LoginContent: FC<LoginProps> = ({
-  isLoggedIn,
   statusCode,
-  login
+  login,
+  location,
+  history,
+  clearStatusCode,
 }) => {
-  console.log(isLoggedIn, statusCode, login)
+  const didMount = useRef<boolean>(false)
 
   const handleSubmit = (values: any) => {
-    console.log(values)
-
+    clearStatusCode()
+    login(values)
   }
+
+
+  useEffect(() => {
+    if (didMount.current) {
+      if (statusCode === StatusCode.OK) {
+        const queryParams = new URLSearchParams(location.search)
+        const redirectPath = queryParams.get("rdr") || "/dashboard"
+        history.push(redirectPath)
+      } else if (statusCode === StatusCode.INITIAL) { }
+      else {
+        message.error(authErrorMessages[statusCode])
+      }
+    } else {
+      didMount.current = true
+    }
+  }, [statusCode])
 
   return (
     <div className="loginWrapper">
@@ -30,15 +50,15 @@ const LoginContent: FC<LoginProps> = ({
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ username: "", password: "" }}
+          initialValues={{ email: "", password: "" }}
           onFinish={handleSubmit}
           onFinishFailed={handleSubmit}
         >
           <Input
-            id="username"
-            label="Username"
+            id="email"
+            label="Email"
             type="text"
-            name="username"
+            name="email"
             className="mb-3 h-12"
           />
           <Input
@@ -55,7 +75,7 @@ const LoginContent: FC<LoginProps> = ({
             type="password"
             className="mb-3 h-12"
           />
-          <button type="submit" className="formSubmitBtn">
+          <button type="submit" onClick={()=> console.log('ssk')} className="formSubmitBtn">
             Sign in
           </button>
           <div className="extraInfo flex justify-center pt-3">
@@ -71,15 +91,15 @@ const LoginContent: FC<LoginProps> = ({
 }
 
 const mapStateToProps = ({auth}: AppState) => ({
-  isLoggedIn: auth.isLoggedIn,
   statusCode: auth.statusCode
 })
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   const actions = {
-    login: loginActionCreator
+    login: loginActionCreator,
+    clearStatusCode: clearStatusCodeAction,
   }
   return bindActionCreators(actions, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginContent)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginContent))

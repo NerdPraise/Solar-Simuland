@@ -15,7 +15,7 @@
 }
 
 .projectCard {
-  @apply rounded-xl h-72 border-blue-100;
+  @apply rounded-xl h-72 border-blue-100 border-2;
 }
 
 .fileIconImg {

@@ -1,0 +1,34 @@
+.ant-layout-header.headerStyle {
+  @apply bg-blue-800;
+}
+
+.menuStyle {
+  @apply bg-blue-800 text-white;
+}
+
+.searchText {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.searchText p {
+  margin: 0;
+}
+
+.leftChange {
+  font-size: 10px;
+  width: 250px;
+  text-align: right;
+}
+
+.footerLayout {
+  @apply bg-blue-50;
+}
+
+.allOption {
+  width: 80%;
+}
+
+.siderLayout {
+  @apply bg-white;
+}

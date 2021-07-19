@@ -4,17 +4,17 @@ import { Redirect, Route, RouteProps } from "react-router-dom"
 import { connect } from "react-redux"
 import { bindActionCreators, Dispatch } from "redux"
 
+import { AppState } from "../../../redux/rootReducers"
 import { checkLoginStatus as checkLoginStatusAction } from "../../../modules/auth/store/actions"
 import { Loader } from "../../Loader"
-import { AppState } from "../../../redux/rootReducers"
 
-interface AuthenticatedRouteProps extends RouteProps {
+interface UnauthenticatedRouteProps extends RouteProps {
   isLoggedIn: boolean
   checkLoginStatus: () => void
   isCheckingLoginStatus?: boolean
 }
 
-const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
+const UnauthenticatedRoute: React.FC<UnauthenticatedRouteProps> = ({
   isLoggedIn,
   checkLoginStatus,
   isCheckingLoginStatus,
@@ -45,11 +45,9 @@ const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
 
   if (hasCheckedLoginStatus) {
     if (isLoggedIn) {
-      return <Route component={component} {...rest} />
+      return <Redirect to="/dashboard" />
     }
-    const path = location?.pathname
-    const encodedPath = encodeURIComponent(`${path}`)
-    return <Redirect to={`/login?rdr=${encodedPath}`} />
+    return <Route component={component} {...rest} />
   }
 
   return <Loader />
@@ -68,4 +66,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(neededActions, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AuthenticatedRoute)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(UnauthenticatedRoute)

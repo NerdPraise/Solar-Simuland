@@ -7,7 +7,7 @@ const AuthenticatedAPI = Axios.create({
   headers: {
     "content-type": "application/json",
   },
-  timeout: 30000,
+  timeout: 18000,
 })
 
 AuthenticatedAPI.interceptors.request.use((apiConfig) => {

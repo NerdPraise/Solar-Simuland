@@ -19,5 +19,5 @@
 }
 
 .loginForm .ant-form-item-control {
-  @apply w-full;
+  @apply w-full max-w-full;
 }

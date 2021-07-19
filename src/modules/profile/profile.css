@@ -1,0 +1,39 @@
+.searchInput {
+  @apply rounded-lg bg-blue-50 border-transparent;
+}
+
+.searchWrapper {
+  @apply w-1/3 mb-5;
+}
+
+.projectFileWrapper {
+  @apply mt-16;
+}
+
+.projectCard {
+  @apply rounded-2xl h-72 border-blue-100 border-2;
+}
+
+.fileIconImg {
+  @apply h-full flex py-14 justify-center items-center;
+}
+
+.projectCard .ant-card-body {
+  padding: 0;
+}
+
+.projectText span {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: #1F2937;
+}
+
+.projectText {
+  @apply flex justify-between items-center px-4 border-t-2 pt-3 border-blue-100;
+}
+
+.cardWrapper {
+  cursor: pointer;
+}
