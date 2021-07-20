@@ -1,10 +1,14 @@
-import { StatusCode } from "../../../shared/helpers";
-import { ILoad, ProjectListState } from "../models";
+import { StatusCode } from "../../../shared/helpers"
+import { ILoad, ILoadProfile, IProject, ProjectListState } from "../models"
 
 export enum ActionTypes {
   LIST_PROJECT = "LIST PROJECT",
   CREAT_PROJECT = "CREATE PROJECT",
-  CREAT_LOAD_PROFILE = "CREATE LOAD PROFILE"
+  GET_PROJECT = "GET PROJECT",
+  CREAT_LOAD_PROFILE = "CREATE LOAD PROFILE",
+  TOGGLE_MODAL = "TOGGLE MODAL",
+  DONE_SHOWING_MODAL = "DONE SHOWING MODAL",
+  GET_LOADPROFILE = "GET LOADPROFILE",
 }
 
 export interface ProjectListAction {
@@ -26,13 +30,36 @@ export interface ProjectCreateAction {
 export interface LoadProfileCreatAction {
   type: ActionTypes.CREAT_LOAD_PROFILE
   payload: {
-    load: ILoad,
+    load: ILoad
+    loadStatusCode: StatusCode
+  }
+}
+
+export interface IsDoneWithModalAction {
+  type: ActionTypes.CREAT_LOAD_PROFILE
+  payload: {
+    isDoneShowTable: boolean
     statusCode: StatusCode
   }
 }
 
+export interface ToggleModalAction {
+  type: ActionTypes.TOGGLE_MODAL
+  payload: {
+    showModal: boolean
+  }
+}
+
+export interface GetProjectModal {
+  type: ActionTypes.GET_LOADPROFILE
+  payload: {
+    loadProfile: ILoadProfile
+  }
+}
 
 export type AuthActions =
   | ProjectListAction
   | ProjectCreateAction
   | LoadProfileCreatAction
+  | GetProjectModal
+  | ToggleModalAction

@@ -23,6 +23,8 @@
 
 .footerLayout {
   @apply bg-blue-50;
+  overflow-y: scroll;
+  transition: ease 0.5s;
 }
 
 .allOption {

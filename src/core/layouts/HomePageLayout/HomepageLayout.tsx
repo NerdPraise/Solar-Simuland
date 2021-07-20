@@ -1,36 +1,82 @@
-import React, { FC, useState } from "react"
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { FC, useState, useEffect, useCallback, useRef } from "react"
 import { Layout, Menu, Modal } from "antd"
 import {
   DownOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   CloseOutlined,
+  UpOutlined,
 } from "@ant-design/icons"
 import { bindActionCreators, Dispatch } from "redux"
+import { RouteComponentProps, withRouter } from "react-router-dom"
+import { connect } from "react-redux"
 
 import "./HomePageLayout.css"
-import { createProject as createProjectAction } from "../../../modules/profile/store/actions"
+import {
+  createProject as createProjectAction,
+  toggleModal as toggleModalAction,
+  getLoadProfile as getLoadProfileAction,
+} from "../../../modules/profile/store/actions"
 import { AppState } from "../../../redux/rootReducers"
-import { connect } from "react-redux"
+import { ILoadProfile, IProject } from "../../../modules/profile/models"
+import { GeneratedInfo } from "./GeneratedInfo"
+import { StatusCode } from "../../../shared/helpers"
 
 const { Header, Footer, Sider, Content } = Layout
 const { SubMenu } = Menu
 
-interface HomePageLayoutProps {
+interface HomePageLayoutProps extends RouteComponentProps<{ id: string }> {
   children: React.ReactElement
   extras?: React.ReactElement
+  showModal: boolean
+  toggleModal: () => void
   createProject: () => void
+  getLoadProfile: (id: string) => void
+  loadProfile: ILoadProfile | null
+  statusCode: StatusCode
+  project: IProject | null
 }
 
-const HomePageLayout: FC<HomePageLayoutProps> = ({ children, extras, createProject }) => {
-  const [isVisible, setIsVisible] = useState<boolean>(false)
+const HomePageLayout: FC<HomePageLayoutProps> = ({
+  children,
+  extras,
+  toggleModal,
+  showModal,
+  createProject,
+  getLoadProfile,
+  match,
+  statusCode,
+  loadProfile,
+  history,
+  project,
+}) => {
   const [collapsed, setCollapsed] = useState<boolean>(false)
+  const [footerWidth, setFooterWidth] = useState<number>(100)
+  const didMount = useRef<boolean>(false)
+  const { id } = match.params
 
-  const handleCancel = () => setIsVisible(false)
+  const handleCancel = () => toggleModal()
   const toggle = () => setCollapsed(!collapsed)
-  const createAndGetProject = () => {
-    setIsVisible(true)
-    createProject()
+
+  useEffect(() => {
+    if (extras) {
+      createProject()
+    } else {
+      getLoadProfile(id)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (didMount.current) {
+      if (statusCode === StatusCode.CREATED) {
+        history.push(`/projects/${project?.load_profile}`)
+      }
+    } else didMount.current = true
+  }, [statusCode])
+
+  const toggleFooter = () => {
+    footerWidth === 50 ? setFooterWidth(100) : setFooterWidth(50)
   }
 
   return (
@@ -38,6 +84,12 @@ const HomePageLayout: FC<HomePageLayoutProps> = ({ children, extras, createProje
       <Layout>
         <Sider
           trigger={null}
+          style={{
+            overflow: "auto",
+            height: "100vh",
+            position: "fixed",
+            left: 0,
+          }}
           collapsible
           collapsed={collapsed}
           className="h-screen siderLayout"
@@ -48,7 +100,7 @@ const HomePageLayout: FC<HomePageLayoutProps> = ({ children, extras, createProje
             <CloseOutlined />
           </div>
         </Sider>
-        <Layout>
+        <Layout style={{ marginLeft: "20%" }}>
           <Header className="headerStyle">
             <div className="w-full flex items-center border-0 h-full">
               <img src="" className="mr-5" />
@@ -165,7 +217,7 @@ const HomePageLayout: FC<HomePageLayoutProps> = ({ children, extras, createProje
             {children}
             <Modal
               width={1500}
-              visible={isVisible}
+              visible={showModal}
               centered
               footer={false}
               onCancel={handleCancel}
@@ -180,32 +232,46 @@ const HomePageLayout: FC<HomePageLayoutProps> = ({ children, extras, createProje
               bottom: 0,
               width: "100%",
               padding: "15px 50px",
+              height: `${!extras ? `${footerWidth}%` : "120px"}`,
             }}
           >
             <div className="allOption">
-              <p className="font-bold text-gray-500 font-sans">Load Profiles</p>
-
-              <div className="flex justify-between">
-                <button
-                  onClick={() => createAndGetProject()}
-                  className="bg-white text-gray-300 mr-4 rounded-lg py-2 px-3"
-                >
-                  Create
-                </button>
-                <button className="bg-white text-gray-300 hover:bg-blue-100 hover:text-gray-100 rounded-lg py-2 px-3">
-                  Upload
-                </button>
-
-                <div className="simulateOptions flex w-full flex-row-reverse">
-                  <button className="bg-blue-800 ml-4 text-white font-sans px-2 rounded-lg py-2 hover:bg-white hover:text-blue-800 hover:border-blue-800">
-                    Stimulate
-                  </button>
-                  <button className="ml-3 bg-white text-gray-300 rounded-lg py-2 px-3">
-                    Build
-                  </button>
-                  <button></button>
-                </div>
+              <div className="flex w-full justify-between font-bold text-gray-500 font-sans">
+                <p className="font-bold text-gray-500 font-sans">
+                  Load Profiles
+                </p>
+                {footerWidth === 50 ? (
+                  <UpOutlined onClick={toggleFooter} />
+                ) : (
+                  <DownOutlined onClick={toggleFooter} />
+                )}
               </div>
+
+              {extras ? (
+                <div className="flex justify-between">
+                  <button
+                    onClick={() => toggleModal()}
+                    className="bg-white text-gray-300 mr-4 rounded-lg py-2 px-3"
+                  >
+                    Create
+                  </button>
+                  <button className="bg-white text-gray-300 hover:bg-blue-100 hover:text-gray-100 rounded-lg py-2 px-3">
+                    Upload
+                  </button>
+
+                  <div className="simulateOptions flex w-full flex-row-reverse">
+                    <button className="bg-blue-800 ml-4 text-white font-sans px-2 rounded-lg py-2 hover:bg-white hover:text-blue-800 hover:border-blue-800">
+                      Stimulate
+                    </button>
+                    <button className="ml-3 bg-white text-gray-300 rounded-lg py-2 px-3">
+                      Build
+                    </button>
+                    <button></button>
+                  </div>
+                </div>
+              ) : (
+                <GeneratedInfo loadProfile={loadProfile} />
+              )}
             </div>
           </Footer>
         </Layout>
@@ -214,17 +280,23 @@ const HomePageLayout: FC<HomePageLayoutProps> = ({ children, extras, createProje
   )
 }
 
-
 const mapDispatchToProps = (dispatch: Dispatch) => {
   const action = {
-    createProject: createProjectAction
+    createProject: createProjectAction,
+    toggleModal: toggleModalAction,
+    getLoadProfile: getLoadProfileAction,
   }
-  
+
   return bindActionCreators(action, dispatch)
 }
 
-const mapStateToProps = ({project}: AppState) => ({
-  project: project.listing.project
+const mapStateToProps = ({ project }: AppState) => ({
+  loadProfile: project.listing.loadProfile,
+  showModal: project.listing.showModal,
+  statusCode: project.listing.loadStatusCode,
+  project: project.listing.project,
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(HomePageLayout)
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(HomePageLayout)
+)

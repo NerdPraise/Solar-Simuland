@@ -4,14 +4,16 @@ import { StatusCode } from "../../../shared/helpers"
 import { ProjectListState } from "../models"
 import { ActionTypes, AuthActions } from "./actionTypes"
 
-
 const projectInitialState: ProjectListState = {
   projects: [],
   statusCode: StatusCode.INITIAL,
+  loadStatusCode: StatusCode.INITIAL,
   project: null,
   load: null,
   loads: [],
-  isDoneShowTable: false
+  isDoneShowTable: false,
+  showModal: false,
+  loadProfile: null,
 }
 
 const productListReducer = (
@@ -26,19 +28,29 @@ const productListReducer = (
     }
     case ActionTypes.CREAT_PROJECT: {
       const { project } = action.payload
-     
-      console.log(project)
 
       return { ...state, project }
     }
     case ActionTypes.CREAT_LOAD_PROFILE: {
-      const { load } = action.payload
-     
-      console.log(load)
+      const { load, loadStatusCode } = action.payload
 
-      return { ...state, load, isDoneShowTable: true }
+      return {
+        ...state,
+        load,
+        loadStatusCode,
+        isDoneShowTable: true,
+      }
     }
-    
+    case ActionTypes.TOGGLE_MODAL: {
+      const { showModal } = action.payload
+
+      return { ...state, showModal }
+    }
+    case ActionTypes.GET_LOADPROFILE: {
+      const { loadProfile } = action.payload
+
+      return { ...state, loadProfile }
+    }
     default:
       return state
   }

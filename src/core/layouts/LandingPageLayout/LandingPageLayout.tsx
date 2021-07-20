@@ -45,7 +45,7 @@ const LandingPageLayout: FC<LandingPageLayoutProps> = ({ children, logOut, statu
           </span>
           <span className="mr-5">
             <Link
-              to="load-profile/new/"
+              to="/load-profile/new/"
               className="text-black hidden bg-gray-100 md:inline-flex hover:bg-black hover:text-gray-100 py-3 px-4 rounded-xl"
             >
               New File

@@ -3,10 +3,13 @@ import { StatusCode } from "../../shared/helpers"
 export interface ProjectListState {
   projects: IProject[]
   statusCode: StatusCode
+  loadStatusCode: StatusCode
   project: IProject | null
   load: ILoad | null
   loads: ILoad[]
   isDoneShowTable: boolean
+  showModal: boolean
+  loadProfile: ILoadProfile | null
 }
 
 export interface IProject {
@@ -21,10 +24,18 @@ export interface ILoadProfile {
   total_demand: number
   name: string
   user: number
+  array_sizing: number
+  battery_capacity: number
+  cable_sizing: number
+  inverter_rating: number
+  no_of_panels: number
+  panel_output: number
+  peak_sun_hours: number
+  inverter_efficiency: number
 }
 
 export interface ILoad {
-  id: 10,
+  id: 10
   load_name: string
   load_rating: number
   quantity: number

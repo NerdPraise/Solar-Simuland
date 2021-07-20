@@ -8,15 +8,17 @@ import LandingPage from "../pages/LandingPage/LandingPage"
 import LoginPage from "../pages/LoginPage/LoginPage"
 import SignupPage from "../pages/SigupPage/SignupPage"
 import CreateLoadProfilePage from "../pages/CreateProfile/CreateProfile"
+import DisplayProfilePage from "../pages/DisplayProfile/DisplayProfile"
 
 const IndexRouter: FC = () => (
   <BrowserRouter>
     <Switch>
       <AuthenticatedRoute path="/dashboard" component={LandingPage} />
       
-      <AuthenticatedRoute path="/projects/:id" component={LandingPage} />
+      <AuthenticatedRoute path="/projects/:id" component={DisplayProfilePage} />
 
       <AuthenticatedRoute path="/load-profile/new" component={CreateLoadProfilePage} />
+
       <Route path="/auth" component={AuthLayout} />
 
       <UnauthenticatedRoute path="/login" component={LoginPage} />

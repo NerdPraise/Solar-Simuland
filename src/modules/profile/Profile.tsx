@@ -23,10 +23,10 @@ const Profile: FC<ProfileProps> = ({ projects, getProjects }) => {
       return (
         <Col md={{ span: 7 }} sm={{ span: 24 }} key={index}>
           <div
-            className="cardWrapper mb-4"
+            className="cardWrapper mb-9"
             onClick={() =>
               window.location.replace(
-                `projects/${project.load_profile}`
+                `/projects/${project.load_profile}`
               )
             }
           >
@@ -69,7 +69,7 @@ const Profile: FC<ProfileProps> = ({ projects, getProjects }) => {
               <div className="text-center text-gray-300 text-3xl border-2 border-blue-100 py-3 rounded-lg font-sans">
                 You don't have any active project
                 <div className="mt-3">
-                  <Link to="load-profile/new">Create New Project</Link>
+                  <Link to="/load-profile/new">Create New Project</Link>
                 </div>
               </div>
             </Col>

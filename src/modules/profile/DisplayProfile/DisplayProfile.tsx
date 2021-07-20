@@ -2,11 +2,11 @@ import { FC, useRef, useState, useLayoutEffect } from "react"
 
 import { usePan, useScale } from "../../../core/hooks"
 import GridImage from "../../../assets/grid.png"
-import './CreateProfile.css'
+import "./DisplayProfile.css"
 
 const ORIGIN = Object.freeze({ x: 0, y: 0 })
 
-const CreateLoadProfile: FC = () => {
+const DisplayLoadProfile: FC = () => {
   const [offset, startPan] = usePan()
   const [buffer, setBuffer] = useState(ORIGIN)
   const ref = useRef<HTMLDivElement | null>(null)
@@ -29,7 +29,7 @@ const CreateLoadProfile: FC = () => {
         <div
           ref={ref}
           onMouseDown={startPan}
-          className="h-screen"
+          className="panWrapper"
           style={{ position: "relative" }}
         >
           <div
@@ -43,13 +43,12 @@ const CreateLoadProfile: FC = () => {
               right: buffer.x,
               top: buffer.y,
             }}
-            className='flex items-center justify-center'
-          >
-          </div>
+            className="flex items-center justify-center"
+          ></div>
         </div>
       </div>
     </div>
   )
 }
 
-export { CreateLoadProfile as default }
+export { DisplayLoadProfile as default }

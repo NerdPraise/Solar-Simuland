@@ -1,0 +1,10 @@
+.tableForEdit {
+  @apply w-full bg-white mx-3;
+  height: 170px;
+  overflow-y: scroll;
+  z-index: 1000;
+}
+
+.panWrapper {
+  height: 90vh;
+}
