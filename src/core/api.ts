@@ -1,6 +1,6 @@
 import Axios from "axios"
 
-const baseURL = process.env.REACT_APP_BASE_URL
+const baseURL = "https://thawing-tor-16209.herokuapp.com/"
 
 const AuthenticatedAPI = Axios.create({
   baseURL,
