@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-91x_p!2hw2$mtt@s$9(%&vw)%h88j!)-yh_eozp@)+!ks-!^vn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
+# CORS_ALLOWED_ORIGINS = ()
+CORS_ALLOW_ALL_ORIGINS = True
 AUTH_USER_MODEL = 'simulator.User'
 
 # Application definition
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
 
     'simulator',
     'phonenumber_field',
+    'corsheaders',
     'rest_framework',
 ]
 
@@ -53,6 +56,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

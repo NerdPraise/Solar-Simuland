@@ -4,7 +4,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import LoadListCreateView, LoadProfileListView, ProjectListCreateView, UserCreateView, VendorListView
+from .views import (LoadListCreateView, LoadProfileListView,
+                    ProjectListCreateView, LoadProfileRetrieveView, UserCreateView, VendorListView)
 urlpatterns = [
     # Login Routes
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -22,6 +23,8 @@ urlpatterns = [
 
     # Project
     path('projects/', ProjectListCreateView.as_view(), name='project-list-create'),
+    path('loadprofile/<int:pk>/', LoadProfileRetrieveView.as_view(),
+         name='project-retrieve'),
 
     # Load Profile
     path('loadprofile/', LoadProfileListView.as_view(), name='list-loadprofile')

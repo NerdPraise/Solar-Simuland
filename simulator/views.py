@@ -2,12 +2,12 @@ from typing import List
 from simulator.models import Load, LoadProfile, Project, Vendor
 from django.shortcuts import render
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework import serializers, status, permissions
 
 
-from .serializers import LoadProfileSerializer, LoadSerializer, ProjectSerializer, UserSerializer, VendorSerializer
+from .serializers import EngineerSerialiser, LoadProfileSerializer, LoadSerializer, ProjectSerializer, UserSerializer, VendorSerializer
 
 
 class UserCreateView(CreateAPIView):
@@ -26,7 +26,7 @@ class LoadListCreateView(ListCreateAPIView):
     def get_queryset(self, load_profile_pk):
         user = self.request.user
         return Load.objects.filter(load_profile__user=user.id, load_profile=load_profile_pk)
-    
+
     def get(self, request, *args, **kwargs):
         load_profile_pk = kwargs['load_profile_pk']
         queryset = self.get_queryset(load_profile_pk)
@@ -34,7 +34,6 @@ class LoadListCreateView(ListCreateAPIView):
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    
     def post(self, request, *args, **kwargs):
         data = request.data
 
@@ -44,6 +43,7 @@ class LoadListCreateView(ListCreateAPIView):
             serializer = self.serializer_class(data=data)
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -62,12 +62,28 @@ class ProjectListCreateView(ListCreateAPIView):
         user = self.request.user
         load_profile = LoadProfile.objects.create(name="Ose", user=user)
         data['load_profile'] = load_profile.id
+        data['user'] = user.id
         serializer = self.serializer_class(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class LoadProfileRetrieveView(RetrieveAPIView):
+    serializer_class = LoadProfileSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = LoadProfile.objects.all()
+
+
 class LoadProfileListView(ListAPIView):
     serializer_class = LoadProfileSerializer
     queryset = LoadProfile.objects.all()
+
+
+class EngineerCreateView(CreateAPIView):
+    serializer_class = EngineerSerialiser
+
+
+class EngineerRetrieveUpdateView(RetrieveUpdateAPIView):
+    serializer_class = EngineerSerialiser
