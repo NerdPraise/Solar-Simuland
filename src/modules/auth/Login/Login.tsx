@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useEffect, useRef } from "react"
-import { Form, message } from "antd"
+import { FC, useEffect, useRef, useState } from "react"
+import { Form, message, Button } from "antd"
 import { bindActionCreators, Dispatch } from "redux"
 import { connect } from "react-redux"
 import { Link, withRouter } from "react-router-dom"
@@ -8,7 +8,10 @@ import { Link, withRouter } from "react-router-dom"
 import { LoginProps } from "../models"
 import { Input } from "../../../shared"
 import { AppState } from "../../../redux/rootReducers"
-import { login as loginActionCreator, clearStatusCode as clearStatusCodeAction } from "../store/actions"
+import {
+  login as loginActionCreator,
+  clearStatusCode as clearStatusCodeAction,
+} from "../store/actions"
 import { StatusCode, authErrorMessages } from "../../../shared/helpers"
 import "./Login.css"
 
@@ -20,12 +23,13 @@ const LoginContent: FC<LoginProps> = ({
   clearStatusCode,
 }) => {
   const didMount = useRef<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleSubmit = (values: any) => {
+    setIsLoading(true)
     clearStatusCode()
     login(values)
   }
-
 
   useEffect(() => {
     if (didMount.current) {
@@ -33,8 +37,8 @@ const LoginContent: FC<LoginProps> = ({
         const queryParams = new URLSearchParams(location.search)
         const redirectPath = queryParams.get("rdr") || "/dashboard"
         history.push(redirectPath)
-      } else if (statusCode === StatusCode.INITIAL) { }
-      else {
+      } else if (statusCode === StatusCode.INITIAL) {
+      } else {
         message.error(authErrorMessages[statusCode])
       }
     } else {
@@ -75,9 +79,13 @@ const LoginContent: FC<LoginProps> = ({
             type="password"
             className="mb-3 h-12"
           />
-          <button type="submit" onClick={()=> console.log('ssk')} className="formSubmitBtn">
+          <Button
+            htmlType="submit"
+            loading={isLoading}
+            className="formSubmitBtn"
+          >
             Sign in
-          </button>
+          </Button>
           <div className="extraInfo flex justify-center pt-3">
             Don't have an account? &nbsp;
             <Link to="/register" className="text-blue-800">
@@ -90,8 +98,8 @@ const LoginContent: FC<LoginProps> = ({
   )
 }
 
-const mapStateToProps = ({auth}: AppState) => ({
-  statusCode: auth.statusCode
+const mapStateToProps = ({ auth }: AppState) => ({
+  statusCode: auth.statusCode,
 })
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
@@ -102,4 +110,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return bindActionCreators(actions, dispatch)
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginContent))
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(LoginContent)
+)
