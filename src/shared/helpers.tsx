@@ -8,7 +8,11 @@ export enum StatusCode {
 }
 
 export const authErrorMessages: Partial<Record<StatusCode, string>> = {
-  [StatusCode.BAD_REQUEST]: 'Check your internet connection',
-  [StatusCode.UNAUTHORISED]: 'You are not authorised to view',
-  [StatusCode.NOT_FOUND]: 'This account does not exist, please do sign up'
+  [StatusCode.BAD_REQUEST]: "Check your internet connection",
+  [StatusCode.UNAUTHORISED]: "You are not authorised to view",
+  [StatusCode.NOT_FOUND]: "This account does not exist, please do sign up",
+}
+
+export const signUpErrorMessages: Partial<Record<StatusCode, string>> = {
+  [StatusCode.BAD_REQUEST]: "Unique usernames and email addresses please",
 }

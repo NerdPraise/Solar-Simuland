@@ -1,4 +1,4 @@
-import { StatusCode } from "../../../shared/helpers";
+import { StatusCode } from "../../../shared/helpers"
 
 export enum ActionTypes {
   LOGIN = "LOGIN",
@@ -43,6 +43,10 @@ export interface LogOutAction {
   type: ActionTypes.LOG_OUT
 }
 
+export interface SignUpAction {
+  type: ActionTypes.SIGN_UP
+  payload: { statusCode: StatusCode }
+}
 
 export type AuthActions =
   | LoginAction
@@ -50,3 +54,4 @@ export type AuthActions =
   | CheckLoginStatusPendingAction
   | ClearStatusCodeAction
   | LogOutAction
+  | SignUpAction

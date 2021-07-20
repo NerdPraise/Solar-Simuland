@@ -2,7 +2,6 @@ import { StatusCode } from "../../../shared/helpers"
 import { AuthState } from "../models"
 import { ActionTypes, AuthActions } from "./actionTypes"
 
-
 const authInitialState: AuthState = {
   isLoggedIn: false,
   statusCode: StatusCode.INITIAL,
@@ -35,7 +34,12 @@ const authReducer = (
       return { ...state, statusCode }
     }
     case ActionTypes.LOG_OUT: {
-      return {...state, isLoggedIn: false}
+      return { ...state, isLoggedIn: false }
+    }
+    case ActionTypes.SIGN_UP: {
+      const { statusCode } = action.payload
+
+      return { ...state, statusCode }
     }
     default:
       return state

@@ -40,6 +40,7 @@ const LoginContent: FC<LoginProps> = ({
       } else if (statusCode === StatusCode.INITIAL) {
       } else {
         message.error(authErrorMessages[statusCode])
+        setIsLoading(false)
       }
     } else {
       didMount.current = true
@@ -82,6 +83,7 @@ const LoginContent: FC<LoginProps> = ({
           <Button
             htmlType="submit"
             loading={isLoading}
+            size="large"
             className="formSubmitBtn"
           >
             Sign in

@@ -1,36 +1,58 @@
-import { Dispatch } from 'redux'
+import { Dispatch } from "redux"
 
-import { API } from '../../../core/api'
-import { StatusCode } from '../../../shared/helpers'
-import { ActionTypes } from './actionTypes'
+import { API } from "../../../core/api"
+import { StatusCode } from "../../../shared/helpers"
+import { ActionTypes } from "./actionTypes"
 
-
-export const login = (formData: { [key: string]: string }) => (dispatch: Dispatch) => {
-  API.post("token/", formData)
+export const signUp = (formData: any) => (dispatch: Dispatch) => {
+  API.post("user/create/", formData)
     .then((response) => {
-      localStorage.setItem("ACCESS_TOKEN_KEY", response.data.access)
-      localStorage.setItem("REFRESH_TOKEN", response.data.refresh)
-
       dispatch({
-        type: ActionTypes.LOGIN,
+        type: ActionTypes.SIGN_UP,
         payload: {
-          isLoggedIn: true,
           statusCode: response.status,
         },
       })
     })
-    .catch((err) =>
+    .catch((err) => {
       dispatch({
-        type: ActionTypes.LOGIN,
+        type: ActionTypes.SIGN_UP,
         payload: {
-          isLoggedIn: false,
           statusCode: err.response
             ? err.response.status
             : StatusCode.BAD_REQUEST,
         },
       })
-    )
+    })
 }
+
+export const login =
+  (formData: { [key: string]: string }) => (dispatch: Dispatch) => {
+    API.post("token/", formData)
+      .then((response) => {
+        localStorage.setItem("ACCESS_TOKEN_KEY", response.data.access)
+        localStorage.setItem("REFRESH_TOKEN", response.data.refresh)
+
+        dispatch({
+          type: ActionTypes.LOGIN,
+          payload: {
+            isLoggedIn: true,
+            statusCode: response.status,
+          },
+        })
+      })
+      .catch((err) =>
+        dispatch({
+          type: ActionTypes.LOGIN,
+          payload: {
+            isLoggedIn: false,
+            statusCode: err.response
+              ? err.response.status
+              : StatusCode.BAD_REQUEST,
+          },
+        })
+      )
+  }
 
 export const checkLoginStatus = () => (dispatch: Dispatch) => {
   dispatch({
@@ -40,23 +62,25 @@ export const checkLoginStatus = () => (dispatch: Dispatch) => {
     },
   })
 
-  API.get('projects/').then(
-    (response) => dispatch({
-      type: ActionTypes.CHECK_LOGIN_STATUS,
-      payload: {
-        isLoggedIn: true,
-        isCheckingLoginStatus: false
-      }
+  API.get("projects/")
+    .then((response) =>
+      dispatch({
+        type: ActionTypes.CHECK_LOGIN_STATUS,
+        payload: {
+          isLoggedIn: true,
+          isCheckingLoginStatus: false,
+        },
+      })
+    )
+    .catch(() => {
+      dispatch({
+        type: ActionTypes.CHECK_LOGIN_STATUS,
+        payload: {
+          isLoggedIn: false,
+          isCheckingLoginStatus: false,
+        },
+      })
     })
-  ).catch(() => {
-    dispatch({
-      type: ActionTypes.CHECK_LOGIN_STATUS,
-      payload: {
-        isLoggedIn: false,
-        isCheckingLoginStatus: false,
-      },
-    })
-  })
 }
 
 export const clearStatusCode = () => (dispatch: Dispatch) => {
@@ -69,10 +93,10 @@ export const clearStatusCode = () => (dispatch: Dispatch) => {
 }
 
 export const logOut = () => (dispatch: Dispatch) => {
-  localStorage.removeItem('REFRESH_TOKEN')
-  localStorage.removeItem('ACCESS_TOKEN_KEY')
+  localStorage.removeItem("REFRESH_TOKEN")
+  localStorage.removeItem("ACCESS_TOKEN_KEY")
 
   dispatch({
-    type: ActionTypes.LOG_OUT
+    type: ActionTypes.LOG_OUT,
   })
 }
