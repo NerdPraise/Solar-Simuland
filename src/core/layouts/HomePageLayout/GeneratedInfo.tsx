@@ -1,6 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useState, useCallback, useEffect } from "react"
-import { Card, Col, Slider, Table, Tooltip, Row } from "antd"
+import { FC, useState, useEffect } from "react"
+import {
+  Card,
+  Col,
+  Slider,
+  Table,
+  Tooltip,
+  Radio,
+  Row,
+  Space,
+  Input,
+} from "antd"
 import { QuestionCircleOutlined } from "@ant-design/icons"
 
 import { tableColumns } from "./helper"
@@ -10,12 +20,24 @@ interface GeneratedInfoProps {
   loadProfile: ILoadProfile | null
 }
 
+const QuestionTooTip: FC<{ text: string }> = ({ text }) => {
+  return (
+    <Tooltip title={text} className="ml-1">
+      <QuestionCircleOutlined style={{ fontSize: "12px" }} />
+    </Tooltip>
+  )
+}
+
 export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
   const [arraySize, setArraySize] = useState<number>(1)
+  const [inverterRange, setInverterRange] = useState<number>(0.25)
+  const [inverterSize, setInverterSize] = useState<number>(0)
   const [batterySize, setBatterySize] = useState<number>(0)
   const [panelRating, setPanelRating] = useState<number>(50)
   const [PSH, setPSH] = useState<number>(1)
-  const [DOA, setDOA] = useState<number>(3)
+  const [NBV, setNBV] = useState<number>(1)
+  const [DOA, setDOA] = useState<number>(0.25)
+  const [DOD, setDOD] = useState<number>(3)
 
   const data = loadProfile?.loads.map((load, index) => {
     return {
@@ -36,12 +58,20 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
 
   useEffect(() => {
     if (loadProfile) {
+      setInverterSize(
+        loadProfile?.total_demand + loadProfile?.total_demand * inverterRange
+      )
+    }
+  }, [inverterRange])
+
+  useEffect(() => {
+    if (loadProfile) {
       const batterySizing =
         (DOA * loadProfile.total_demand) /
-        (0.85 * loadProfile?.inverter_efficiency)
+        (loadProfile?.inverter_efficiency * DOD * NBV)
       setBatterySize(batterySizing)
     }
-  }, [DOA])
+  }, [DOA, DOD, NBV])
 
   return (
     <div>
@@ -111,11 +141,11 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
                 <Slider
                   className="w-2/3"
                   min={1}
-                  max={15}
+                  max={4}
                   step={0.5}
                   defaultValue={DOA}
                   onChange={(value) => setDOA(value)}
-                  tipFormatter={(value) => `${value} hr`}
+                  tipFormatter={(value) => `${value} day(s)`}
                 />
               </div>
             </Col>
@@ -144,8 +174,8 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
         <Row justify="space-between">
           <Col className="mt-9" sm={{ span: 12 }} md={{ span: 6 }}>
             <div>
-              <p className="font-bold">Total load demand</p>
-              <p>{loadProfile?.total_demand.toFixed(2)} W</p>
+              <p className="font-bold">Total watt hours</p>
+              <p>{loadProfile?.total_demand.toFixed(2)} Wh</p>
             </div>
           </Col>
           <Col className="mt-9" sm={{ span: 12 }} md={{ span: 6 }}>
@@ -179,6 +209,101 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
           </Col>
         </Row>
       </Card>
+
+      <Row className="mt-9" justify="space-between">
+        <Col sm={{ span: 11 }} md={{ span: 7 }}>
+          <Card className="h-full">
+            <div className="inverter-sizing">
+              <p className="font-bold">Inverter Sizing</p>
+              <Radio.Group
+                onChange={(e) => setInverterRange(e.target.value)}
+                value={inverterRange}
+              >
+                <Space direction="vertical">
+                  <Radio value={0.25}>25%</Radio>
+                  <Radio value={0.27}>27%</Radio>
+                  <Radio value={0.3}>30%</Radio>
+                </Space>
+              </Radio.Group>
+              <p>Recommended size</p>
+              <p>{inverterSize.toFixed(2)}</p>
+              <button className="border px-2 float-right">OK</button>
+            </div>
+          </Card>
+        </Col>
+
+        <Col sm={{ span: 11 }} md={{ span: 7 }}>
+          <Card className="h-full">
+            <div className="battery-sizing">
+              <p className="font-bold">Battery Sizing</p>
+              <Input name="batterySize" value={batterySize.toFixed(2)} />
+              <div className="mt-4">
+                <Row justify="space-between">
+                  <Col>
+                    <div className="font-semibold flex mb-2">
+                      <span>DOD</span>
+                      <QuestionTooTip text="Discharge of Depth" />
+                    </div>
+                    <Radio.Group
+                      onChange={(e) => setDOD(e.target.value)}
+                      value={DOD}
+                    >
+                      <Space direction="vertical">
+                        <Radio value={0.25}>25%</Radio>
+                        <Radio value={0.5}>50%</Radio>
+                        <Radio value={0.75}>75%</Radio>
+                      </Space>
+                    </Radio.Group>
+                  </Col>
+
+                  <Col>
+                    <div className="font-semibold flex mb-2">
+                      <span>NBV</span>
+                      <QuestionTooTip text="Norminal battery voltage" />
+                    </div>
+                    <Radio.Group
+                      onChange={(e) => setNBV(e.target.value)}
+                      value={NBV}
+                    >
+                      <Space direction="vertical">
+                        <Radio value={1}>1</Radio>
+                        <Radio value={2}>2</Radio>
+                        <Radio value={3}>3</Radio>
+                        <Radio value={4}>4</Radio>
+                      </Space>
+                    </Radio.Group>
+                  </Col>
+                  <Col>
+                    <div className="font-semibold flex mb-2">
+                      <span>DOA</span>
+                      <QuestionTooTip text="Days of Autonomy" />
+                    </div>
+                    <Radio.Group
+                      onChange={(e) => setDOA(e.target.value)}
+                      value={DOA}
+                    >
+                      <Space direction="vertical">
+                        <Radio value={1}>1</Radio>
+                        <Radio value={2}>2</Radio>
+                        <Radio value={3}>3</Radio>
+                        <Radio value={4}>4</Radio>
+                      </Space>
+                    </Radio.Group>
+                  </Col>
+                </Row>
+              </div>
+
+              <button className="border px-2 mt-2 float-right">OK</button>
+            </div>
+          </Card>
+        </Col>
+
+        <Col sm={{ span: 11 }} md={{ span: 7 }}>
+          <Card className="h-full">
+            <div className="inverter-sizing"></div>
+          </Card>
+        </Col>
+      </Row>
     </div>
   )
 }

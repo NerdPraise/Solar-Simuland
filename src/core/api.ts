@@ -1,6 +1,6 @@
 import Axios from "axios"
 
-const baseURL = "https://thawing-tor-16209.herokuapp.com/api/"
+const baseURL = "http://localhost:8000/api/"
 
 const AuthenticatedAPI = Axios.create({
   baseURL,
