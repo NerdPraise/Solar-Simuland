@@ -212,9 +212,13 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
 
       <Row className="mt-9" justify="space-between">
         <Col sm={{ span: 11 }} md={{ span: 7 }}>
-          <Card className="h-full">
+          <Card className="h-full cardSize">
             <div className="inverter-sizing">
               <p className="font-bold">Inverter Sizing</p>
+              <div className="mb-3">
+                <Input name="batterySize" value={inverterSize.toFixed(2)} />
+              </div>
+
               <Radio.Group
                 onChange={(e) => setInverterRange(e.target.value)}
                 value={inverterRange}
@@ -225,15 +229,17 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
                   <Radio value={0.3}>30%</Radio>
                 </Space>
               </Radio.Group>
-              <p>Recommended size</p>
-              <p>{inverterSize.toFixed(2)}</p>
-              <button className="border px-2 float-right">OK</button>
+              <div>
+                <button className="border px-2 mt-2 absolute bottom-3">
+                  OK
+                </button>
+              </div>
             </div>
           </Card>
         </Col>
 
         <Col sm={{ span: 11 }} md={{ span: 7 }}>
-          <Card className="h-full">
+          <Card className="h-full cardSize">
             <div className="battery-sizing">
               <p className="font-bold">Battery Sizing</p>
               <Input name="batterySize" value={batterySize.toFixed(2)} />
@@ -293,7 +299,9 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
                 </Row>
               </div>
 
-              <button className="border px-2 mt-2 float-right">OK</button>
+              <button className="border px-2 mt-2 absolute  bottom-3">
+                OK
+              </button>
             </div>
           </Card>
         </Col>
