@@ -28,11 +28,16 @@ export const SiderInfo: FC<SiderInfoProps> = ({ models, setSelected }) => {
           {models.map((model) => (
             <div
               onClick={() => setSelected(model.id)}
-              className="flex justify-between mb-5 cursor-pointer"
+              className="flex justify-between mb-5 items-center cursor-pointer"
               key={model.id}
             >
               <div>
-                <img src={model.image} width="100%" alt="" />
+                <img
+                  src={model.image}
+                  width="100%"
+                  alt=""
+                  className="imageextra"
+                />
               </div>
               <div>
                 <div className="flex justify-between">
