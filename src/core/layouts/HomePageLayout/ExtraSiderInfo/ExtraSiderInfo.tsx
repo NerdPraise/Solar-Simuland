@@ -44,14 +44,15 @@ export const SiderInfo: FC<SiderInfoProps> = ({ models, setSelected }) => {
                 <div>
                   <div className="flex justify-between">
                     <span className="font-semibold mr-2">Isc:</span> {model.isc}
+                    A
                   </div>
                   <div className="flex justify-between">
                     <span className="font-semibold mr-2">PVEff: </span>
-                    {model.pveff}
+                    {model.pveff}%
                   </div>
                   <div className="flex justify-between">
                     <span className="font-semibold mr-2">PGF:</span>
-                    {model.peak_generation_factor}
+                    {model.peak_generation_factor}%
                   </div>
                   <div className="flex justify-between">
                     <a
