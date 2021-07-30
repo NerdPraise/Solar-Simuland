@@ -27,29 +27,41 @@ export const SiderInfo: FC<SiderInfoProps> = ({ models, setSelected }) => {
         <Panel header="PV Modules" key="1">
           {models.map((model) => (
             <div
-              onClick={() => setSelected(model.id)}
-              className="flex justify-between mb-5 items-center cursor-pointer"
+              className="mb-5 hover:bg-blue-200 px-2 items-center cursor-pointer"
               key={model.id}
             >
-              <div>
-                <img
-                  src={model.image}
-                  width="100%"
-                  alt=""
-                  className="imageextra"
-                />
-              </div>
-              <div>
-                <div className="flex justify-between">
-                  <span className="font-semibold mr-2">Isc:</span> {model.isc}
+              <div className="ml-auto mb-3 font-bold">{model.name}</div>
+              <div className="flex justify-between ">
+                <div>
+                  <img
+                    onClick={() => setSelected(model.id)}
+                    src={model.image}
+                    width="100%"
+                    alt=""
+                    className="imageextra"
+                  />
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-semibold mr-2">PVEff: </span>
-                  {model.pveff}
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-semibold mr-2">PGF:</span>
-                  {model.peak_generation_factor}
+                <div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold mr-2">Isc:</span> {model.isc}
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold mr-2">PVEff: </span>
+                    {model.pveff}
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold mr-2">PGF:</span>
+                    {model.peak_generation_factor}
+                  </div>
+                  <div className="flex justify-between">
+                    <a
+                      className="font-semibold mr-2"
+                      target="_blank"
+                      href={model.plan_file}
+                    >
+                      Download plan
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

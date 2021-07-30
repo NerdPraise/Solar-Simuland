@@ -272,7 +272,7 @@ const HomePageLayout: FC<HomePageLayoutProps> = ({
                 <div className="flex justify-between">
                   <button
                     onClick={() => toggleModal()}
-                    className="bg-white text-gray-300 mr-4 rounded-lg py-2 px-3"
+                    className="bg-white bg-blue-500 text-white mr-4 rounded-lg py-2 px-3"
                   >
                     Create
                   </button>

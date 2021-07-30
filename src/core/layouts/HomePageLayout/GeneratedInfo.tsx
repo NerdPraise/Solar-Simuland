@@ -86,7 +86,7 @@ export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
           SHP *
           Beff)
       setPVCapacity(PVCapacity)
-      setArraySize(PVCapacity / selectedModel.power_rating)
+      setArraySize(loadProfile.total_demand / selectedModel.power_rating)
     }
   }, [SHP, selectedModel, Beff])
 
@@ -288,7 +288,7 @@ export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
                     <Input
                       name="PVCapacity"
                       placeholder="PV Module Capacity"
-                      value={PVCapacity.toFixed(2)}
+                      value={`${PVCapacity.toFixed(2)} W`}
                     />
                   </div>
                   <div className="mb-3">
