@@ -1,5 +1,5 @@
 import { StatusCode } from "../../../shared/helpers"
-import { ILoad, ILoadProfile, IProject, ProjectListState } from "../models"
+import { ILoad, ILoadProfile, SolarModel, ProjectListState } from "../models"
 
 export enum ActionTypes {
   LIST_PROJECT = "LIST PROJECT",
@@ -9,6 +9,8 @@ export enum ActionTypes {
   TOGGLE_MODAL = "TOGGLE MODAL",
   DONE_SHOWING_MODAL = "DONE SHOWING MODAL",
   GET_LOADPROFILE = "GET LOADPROFILE",
+  GET_SOLAR_MODELS = "GET SOLAR MODELS",
+  GET_SOLAR_MODEL = "GET SOLAR MODEL",
 }
 
 export interface ProjectListAction {
@@ -57,9 +59,25 @@ export interface GetProjectModal {
   }
 }
 
+export interface GetSolarModels {
+  type: ActionTypes.GET_SOLAR_MODELS
+  payload: {
+    models: SolarModel[]
+  }
+}
+
+export interface GetSingleSolarModel {
+  type: ActionTypes.GET_SOLAR_MODEL
+  payload: {
+    selectedModel: SolarModel
+  }
+}
+
 export type AuthActions =
   | ProjectListAction
   | ProjectCreateAction
   | LoadProfileCreatAction
   | GetProjectModal
   | ToggleModalAction
+  | GetSolarModels
+  | GetSingleSolarModel

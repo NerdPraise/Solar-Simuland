@@ -10,6 +10,8 @@ export interface ProjectListState {
   isDoneShowTable: boolean
   showModal: boolean
   loadProfile: ILoadProfile | null
+  models: SolarModel[]
+  selectedModel: SolarModel | null
 }
 
 export interface IProject {
@@ -32,6 +34,17 @@ export interface ILoadProfile {
   panel_output: number
   peak_sun_hours: number
   inverter_efficiency: number
+}
+
+export interface SolarModel {
+  id: string | number
+  image: string
+  isc: string
+  pveff: string
+  power_rating: number
+  plan_file: string
+  peak_generation_factor: string
+  name: string
 }
 
 export interface ILoad {

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { FC, useState, useEffect, useCallback, useRef } from "react"
+import React, { FC, useState, useEffect, useRef } from "react"
 import { Layout, Menu, Modal } from "antd"
 import {
   DownOutlined,
@@ -17,11 +17,17 @@ import {
   createProject as createProjectAction,
   toggleModal as toggleModalAction,
   getLoadProfile as getLoadProfileAction,
+  getSolarModels as getSolarModelsAction,
 } from "../../../modules/profile/store/actions"
 import { AppState } from "../../../redux/rootReducers"
-import { ILoadProfile, IProject } from "../../../modules/profile/models"
+import {
+  ILoadProfile,
+  IProject,
+  SolarModel,
+} from "../../../modules/profile/models"
 import { GeneratedInfo } from "./GeneratedInfo"
 import { StatusCode } from "../../../shared/helpers"
+import ExtraSiderInfo from "./ExtraSiderInfo/ExtraSiderInfo"
 
 const { Header, Footer, Sider, Content } = Layout
 const { SubMenu } = Menu
@@ -32,10 +38,13 @@ interface HomePageLayoutProps extends RouteComponentProps<{ id: string }> {
   showModal: boolean
   toggleModal: () => void
   createProject: () => void
+
+  getSolarModels: () => void
   getLoadProfile: (id: string) => void
   loadProfile: ILoadProfile | null
   statusCode: StatusCode
   project: IProject | null
+  models: SolarModel[]
 }
 
 const HomePageLayout: FC<HomePageLayoutProps> = ({
@@ -50,6 +59,8 @@ const HomePageLayout: FC<HomePageLayoutProps> = ({
   loadProfile,
   history,
   project,
+  getSolarModels,
+  models,
 }) => {
   const [collapsed, setCollapsed] = useState<boolean>(false)
   const [footerWidth, setFooterWidth] = useState<number>(100)
@@ -64,6 +75,7 @@ const HomePageLayout: FC<HomePageLayoutProps> = ({
       createProject()
     } else {
       getLoadProfile(id)
+      getSolarModels()
     }
   }, [])
 
@@ -98,6 +110,15 @@ const HomePageLayout: FC<HomePageLayoutProps> = ({
           <div className="bg-blue-50 text-center text-sm py-3 px-3 flex items-center justify-between searchText font-sans w-full">
             <p>Press ‘/’ to search</p>
             <CloseOutlined />
+          </div>
+          <div>
+            {extras && models ? (
+              ""
+            ) : (
+              <div className="">
+                <ExtraSiderInfo />
+              </div>
+            )}
           </div>
         </Sider>
         <Layout style={{ marginLeft: "20%" }}>
@@ -285,6 +306,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     createProject: createProjectAction,
     toggleModal: toggleModalAction,
     getLoadProfile: getLoadProfileAction,
+    getSolarModels: getSolarModelsAction,
   }
 
   return bindActionCreators(action, dispatch)
@@ -295,6 +317,7 @@ const mapStateToProps = ({ project }: AppState) => ({
   showModal: project.listing.showModal,
   statusCode: project.listing.loadStatusCode,
   project: project.listing.project,
+  models: project.listing.models,
 })
 
 export default withRouter(

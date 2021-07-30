@@ -117,3 +117,55 @@ export const toggleModal =
       },
     })
   }
+
+export const getSolarModels =
+  () => (dispatch: Dispatch, getState: () => AppState) => {
+    API.get(`solar_models/`)
+      .then((response) => {
+        dispatch({
+          type: ActionTypes.GET_SOLAR_MODELS,
+          payload: {
+            models: response.data,
+          },
+        })
+      })
+      .catch((err) => {
+        const { models } = getState().project.listing
+        console.log(err.response)
+        dispatch({
+          type: ActionTypes.GET_SOLAR_MODELS,
+          payload: {
+            models,
+            loadStatusCode: err.response
+              ? err.response.status
+              : StatusCode.BAD_REQUEST,
+          },
+        })
+      })
+  }
+
+export const setSelected =
+  (id: string | number) => (dispatch: Dispatch, getState: () => AppState) => {
+    API.get(`solar_models/${id}`)
+      .then((response) => {
+        dispatch({
+          type: ActionTypes.GET_SOLAR_MODEL,
+          payload: {
+            selectedModel: response.data,
+          },
+        })
+      })
+      .catch((err) => {
+        const { selectedModel } = getState().project.listing
+        console.log(err.response)
+        dispatch({
+          type: ActionTypes.GET_SOLAR_MODEL,
+          payload: {
+            selectedModel,
+            loadStatusCode: err.response
+              ? err.response.status
+              : StatusCode.BAD_REQUEST,
+          },
+        })
+      })
+  }

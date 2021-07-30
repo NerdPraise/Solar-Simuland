@@ -14,6 +14,8 @@ const projectInitialState: ProjectListState = {
   isDoneShowTable: false,
   showModal: false,
   loadProfile: null,
+  models: [],
+  selectedModel: null,
 }
 
 const productListReducer = (
@@ -41,6 +43,14 @@ const productListReducer = (
         isDoneShowTable: true,
       }
     }
+    case ActionTypes.GET_SOLAR_MODELS: {
+      const { models } = action.payload
+
+      return {
+        ...state,
+        models,
+      }
+    }
     case ActionTypes.TOGGLE_MODAL: {
       const { showModal } = action.payload
 
@@ -50,6 +60,11 @@ const productListReducer = (
       const { loadProfile } = action.payload
 
       return { ...state, loadProfile }
+    }
+    case ActionTypes.GET_SOLAR_MODEL: {
+      const { selectedModel } = action.payload
+
+      return { ...state, selectedModel }
     }
     default:
       return state

@@ -14,10 +14,13 @@ import {
 import { QuestionCircleOutlined } from "@ant-design/icons"
 
 import { tableColumns } from "./helper"
-import { ILoadProfile } from "../../../modules/profile/models"
+import { ILoadProfile, SolarModel } from "../../../modules/profile/models"
+import { AppState } from "../../../redux/rootReducers"
+import { connect } from "react-redux"
 
 interface GeneratedInfoProps {
   loadProfile: ILoadProfile | null
+  selectedModel: SolarModel | null
 }
 
 const QuestionTooTip: FC<{ text: string }> = ({ text }) => {
@@ -28,16 +31,22 @@ const QuestionTooTip: FC<{ text: string }> = ({ text }) => {
   )
 }
 
-export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
+export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
+  loadProfile,
+  selectedModel,
+}) => {
   const [arraySize, setArraySize] = useState<number>(1)
   const [inverterRange, setInverterRange] = useState<number>(0.25)
-  const [inverterSize, setInverterSize] = useState<number>(0)
+  const [inverterSize, setInverterSize] = useState<number>(1)
   const [batterySize, setBatterySize] = useState<number>(0)
   const [panelRating, setPanelRating] = useState<number>(50)
   const [PSH, setPSH] = useState<number>(1)
   const [NBV, setNBV] = useState<number>(1)
   const [DOA, setDOA] = useState<number>(0.25)
   const [DOD, setDOD] = useState<number>(3)
+  const [SHP, setSHP] = useState<number>(1)
+  const [Beff, setBeff] = useState<number>(0.7)
+  const [PVCapacity, setPVCapacity] = useState<number>(3)
 
   const data = loadProfile?.loads.map((load, index) => {
     return {
@@ -50,11 +59,6 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
       profile_type: load.profile_type,
     }
   })
-
-  useEffect(() => {
-    const panelOutput = panelRating * PSH * 0.75
-    if (loadProfile) setArraySize(loadProfile?.total_demand / panelOutput)
-  }, [PSH, panelRating])
 
   useEffect(() => {
     if (loadProfile) {
@@ -72,6 +76,19 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
       setBatterySize(batterySizing)
     }
   }, [DOA, DOD, NBV])
+
+  useEffect(() => {
+    if (selectedModel && loadProfile) {
+      const PVCapacity =
+        (loadProfile.total_demand * 1.8 * 100 * 100) /
+        (Number(selectedModel.peak_generation_factor) *
+          Number(selectedModel.pveff) *
+          SHP *
+          Beff)
+      setPVCapacity(PVCapacity)
+      setArraySize(PVCapacity / selectedModel.power_rating)
+    }
+  }, [SHP, selectedModel, Beff])
 
   return (
     <div>
@@ -127,48 +144,6 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
                 />
               </div>
             </Col>
-            <Col sm={{ span: 24 }} md={{ span: 11 }}>
-              <div className="mt-9 w-full">
-                <p>
-                  Days of autonomy
-                  <Tooltip
-                    className="ml-2"
-                    title="What is the average amount of days for the battery supply with no external power input?"
-                  >
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                </p>
-                <Slider
-                  className="w-2/3"
-                  min={1}
-                  max={4}
-                  step={0.5}
-                  defaultValue={DOA}
-                  onChange={(value) => setDOA(value)}
-                  tipFormatter={(value) => `${value} day(s)`}
-                />
-              </div>
-            </Col>
-            <Col sm={{ span: 24 }} md={{ span: 12 }}>
-              <div className="mt-9 w-full">
-                <p>
-                  Solay array wattage
-                  <Tooltip
-                    className="ml-2"
-                    title="What is the power rating of the array you want to use?"
-                  >
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                </p>
-                <Slider
-                  className="w-2/3"
-                  min={50}
-                  max={450}
-                  step={50}
-                  tipFormatter={(value) => `${value} W`}
-                />
-              </div>
-            </Col>
           </Row>
         </div>
         <Row justify="space-between">
@@ -218,6 +193,10 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
               <div className="mb-3">
                 <Input name="batterySize" value={inverterSize.toFixed(2)} />
               </div>
+              <div className="font-semibold flex mb-2">
+                <span>Compensation</span>
+                <QuestionTooTip text="Select inverter compensation" />
+              </div>
 
               <Radio.Group
                 onChange={(e) => setInverterRange(e.target.value)}
@@ -229,11 +208,7 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
                   <Radio value={0.3}>30%</Radio>
                 </Space>
               </Radio.Group>
-              <div>
-                <button className="border px-2 mt-2 absolute bottom-3">
-                  OK
-                </button>
-              </div>
+              <div></div>
             </div>
           </Card>
         </Col>
@@ -298,20 +273,92 @@ export const GeneratedInfo: FC<GeneratedInfoProps> = ({ loadProfile }) => {
                   </Col>
                 </Row>
               </div>
-
-              <button className="border px-2 mt-2 absolute  bottom-3">
-                OK
-              </button>
             </div>
           </Card>
         </Col>
 
         <Col sm={{ span: 11 }} md={{ span: 7 }}>
           <Card className="h-full">
-            <div className="inverter-sizing"></div>
+            <div className="PV-sizing">
+              <p className="font-bold">PV Sizing</p>
+              {selectedModel ? (
+                <>
+                  <div className="mb-3">
+                    <p>PV Module Capacity</p>
+                    <Input
+                      name="PVCapacity"
+                      placeholder="PV Module Capacity"
+                      value={PVCapacity.toFixed(2)}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <p>PV Array Size</p>
+                    <Input
+                      name="PVArraySize"
+                      placeholder="PV Array Size"
+                      value={Math.ceil(arraySize)}
+                    />
+                  </div>
+                  <Row justify="space-between">
+                    <Col>
+                      <div className="font-semibold flex mb-2">
+                        <span>SHP</span>
+                        <QuestionTooTip text="Peak sun hours at location to be installed" />
+                      </div>
+
+                      <Radio.Group
+                        onChange={(e) => setSHP(e.target.value)}
+                        value={SHP}
+                      >
+                        <Space direction="vertical">
+                          <Radio value={1}>1</Radio>
+                          <Radio value={2}>2</Radio>
+                          <Radio value={3}>3</Radio>
+                          <Radio value={4}>4</Radio>
+                          <Radio value={5}>5</Radio>
+                        </Space>
+                      </Radio.Group>
+                    </Col>
+                    <Col>
+                      <div className="font-semibold flex mb-2">
+                        <span>Selected Module ratings</span>
+                      </div>
+                      {selectedModel.power_rating} W
+                    </Col>
+
+                    <Col>
+                      <div className="font-semibold flex mb-2">
+                        <span>Beff</span>
+                        <QuestionTooTip text="Efficiency of battery" />
+                      </div>
+                      <Radio.Group
+                        onChange={(e) => setBeff(e.target.value)}
+                        value={Beff}
+                      >
+                        <Space direction="vertical">
+                          <Radio value={0.7}>0.7</Radio>
+                          <Radio value={0.8}>0.8</Radio>
+                          <Radio value={0.9}>0.9</Radio>
+                        </Space>
+                      </Radio.Group>
+                    </Col>
+                  </Row>
+                </>
+              ) : (
+                <div>
+                  <button>Select PV Module</button>
+                </div>
+              )}
+            </div>
           </Card>
         </Col>
       </Row>
     </div>
   )
 }
+
+const mapStateToProps = ({ project }: AppState) => ({
+  selectedModel: project.listing.selectedModel,
+})
+
+export const GeneratedInfo = connect(mapStateToProps)(GeneratedInfoContent)
