@@ -1,13 +1,17 @@
 from typing import List
-from simulator.models import Load, LoadProfile, Project, Vendor
+from simulator.models import Load, LoadProfile, Project, SolarModel, Vendor
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveUpdateAPIView, UpdateAPIView
 from rest_framework.response import Response
-from rest_framework import serializers, status, permissions
+from rest_framework import status, permissions
 
 
-from .serializers import EngineerSerialiser, LoadProfileSerializer, LoadSerializer, ProjectSerializer, UserSerializer, VendorSerializer
+from .serializers import(
+    EngineerSerialiser, LoadProfileSerializer, LoadSerializer,
+    ProjectSerializer, SolarModelsSerializer, UserSerializer,
+    VendorSerializer
+)
 
 
 class UserCreateView(CreateAPIView):
@@ -87,3 +91,13 @@ class EngineerCreateView(CreateAPIView):
 
 class EngineerRetrieveUpdateView(RetrieveUpdateAPIView):
     serializer_class = EngineerSerialiser
+
+
+class SolarModelsGetView(ListAPIView):
+    serializer_class = SolarModelsSerializer
+    queryset = SolarModel.objects.all()
+
+
+class SolarModelsRetrieveView(RetrieveAPIView):
+    serializer_class = SolarModelsSerializer
+    queryset = SolarModel.objects.all()

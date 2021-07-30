@@ -1,7 +1,7 @@
 from django.db.models import fields
 from rest_framework import serializers
 
-from .models import Engineer, Load, LoadProfile, Project, User, Vendor
+from .models import Engineer, Load, LoadProfile, Project, SolarModel, User, Vendor
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -53,4 +53,10 @@ class LoadProfileSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
+        fields = '__all__'
+
+
+class SolarModelsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SolarModel
         fields = '__all__'

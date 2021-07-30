@@ -50,17 +50,14 @@ class Load(models.Model):
     weekly_usage = models.FloatField()
     profile_type = models.CharField(choices=TYPE_CHOICE, max_length=2)
     inverter_efficiency = models.FloatField(blank=True, null=True, default=0.9)
-    total_wattage_hourly = models.FloatField(editable=False)
+    total_wattage_hourly = models.FloatField()
+
     load_profile = models.ForeignKey(
         'LoadProfile', related_name='loads', on_delete=models.CASCADE, null=True)
 
     def save(self, *args, **kwargs):
-        if self.profile_type == 'AC':
-            total_usage = (self.load_rating *
-                           self.hourly_usage * self.weekly_usage) / (7 * self.inverter_efficiency)
-        else:
-            total_usage = (self.load_rating *
-                           self.hourly_usage * self.weekly_usage) / 7
+        total_usage = (self.load_rating *
+                       self.hourly_usage * self.weekly_usage * self.quantity) / (7)
         self.total_wattage_hourly = total_usage
         super().save(*args, **kwargs)
 
@@ -70,6 +67,8 @@ class Load(models.Model):
 
 class LoadProfile(models.Model):
     total_demand = models.FloatField(default=0)
+    total_ac_demand = models.FloatField(default=0)
+    total_dc_demand = models.FloatField(default=0)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     name = models.CharField(max_length=120)
     peak_sun_hours = models.FloatField(default=3.5)
@@ -87,21 +86,43 @@ class LoadProfile(models.Model):
         return super().save(*args, **kwargs)
 
     def __str__(self):
+        return f'{self.name} {self.total_demand}'
+
+
+class SolarModel(models.Model):
+    image = models.ImageField(null=True)
+    isc = models.DecimalField("Short circuit current",
+                              decimal_places=2, max_digits=10)
+    pveff = models.DecimalField(
+        "PV efficiency", decimal_places=2, max_digits=10)
+    power_rating = models.IntegerField()
+    plan_file = models.FileField(null=True)
+    peak_generation_factor = models.DecimalField(
+        decimal_places=2, max_digits=10)
+    name = models.CharField(max_length=120)
+
+    def __str__(self):
         return self.name
 
 
 def calculate_total_load(sender, **kwargs):
     total = 0
-    if kwargs['created']:
-        load_profile = kwargs['instance'].load_profile
-        loads = load_profile.loads.all()
-        IE = load_profile.inverter_efficiency or None
-        for load in loads:
-            if not IE and load.profile_type == 'AC':
-                load_profile.inverter_efficiency = load.inverter_efficiency
-            total += load.total_wattage_hourly
-        load_profile.total_demand = total
-        load_profile.save()
+    ac_total = 0
+    dc_total = 0
+    load_profile = kwargs['instance'].load_profile
+    loads = load_profile.loads.all()
+    IE = load_profile.inverter_efficiency or None
+    for load in loads:
+        if not IE and load.profile_type == 'AC':
+            load_profile.inverter_efficiency = load.inverter_efficiency
+        if load.profile_type == 'AC':
+            ac_total += load.total_wattage_hourly / load_profile.inverter_efficiency
+        if load.profile_type == 'DC':
+            dc_total += load.total_wattage_hourly
+    load_profile.total_ac_demand = ac_total
+    load_profile.total_dc_demand = dc_total
+    load_profile.total_demand = dc_total + ac_total
+    load_profile.save()
 
 
 post_save.connect(calculate_total_load, sender=Load)
