@@ -39,10 +39,8 @@ export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
   const [inverterRange, setInverterRange] = useState<number>(0.25)
   const [inverterSize, setInverterSize] = useState<number>(1)
   const [batterySize, setBatterySize] = useState<number>(0)
-  const [panelRating, setPanelRating] = useState<number>(50)
-  const [PSH, setPSH] = useState<number>(1)
   const [NBV, setNBV] = useState<number>(1)
-  const [DOA, setDOA] = useState<number>(0.25)
+  const [DOA, setDOA] = useState<number>(1)
   const [DOD, setDOD] = useState<number>(3)
   const [SHP, setSHP] = useState<number>(1)
   const [Beff, setBeff] = useState<number>(0.7)
@@ -115,9 +113,10 @@ export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
                 <Slider
                   className="w-2/3"
                   min={1}
-                  max={15}
+                  max={6}
                   step={0.5}
-                  onChange={(value) => setPSH(value)}
+                  value={SHP}
+                  onChange={(value) => setSHP(value)}
                   tipFormatter={(value) => `${value} hr`}
                 />
               </div>
@@ -125,22 +124,22 @@ export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
             <Col sm={{ span: 24 }} md={{ span: 12 }}>
               <div className="mt-9 w-full">
                 <p>
-                  Solay panel wattage
+                  Days of autonomy
                   <Tooltip
                     className="ml-2"
-                    title="What is the power rating of the panel you want to use?"
+                    title="Specify days for battery supply"
                   >
                     <QuestionCircleOutlined />
                   </Tooltip>
                 </p>
                 <Slider
                   className="w-2/3"
-                  min={50}
-                  max={450}
-                  step={50}
-                  defaultValue={panelRating}
-                  onChange={(value) => setPanelRating(value)}
-                  tipFormatter={(value) => `${value} W`}
+                  min={1}
+                  max={6}
+                  step={1}
+                  value={DOA}
+                  onChange={(value) => setDOA(value)}
+                  tipFormatter={(value) => `${value} days`}
                 />
               </div>
             </Col>
