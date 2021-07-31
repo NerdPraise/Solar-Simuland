@@ -22,16 +22,16 @@ export const SiderInfo: FC<SiderInfoProps> = ({ models, setSelected }) => {
   it can be found as a welcome guest in many households across the world.
 `
   return (
-    <div>
+    <div className="extraSides">
       <Collapse accordion defaultActiveKey={["1"]} bordered={false}>
         <Panel header="PV Modules" key="1">
           {models.map((model) => (
             <div
-              className="mb-5 hover:bg-blue-200 px-2 items-center cursor-pointer"
+              className="mb-5 hover:bg-blue-200 px-2 py-2 rounded items-center cursor-pointer"
               key={model.id}
             >
               <div className="ml-auto mb-3 font-bold">{model.name}</div>
-              <div className="flex justify-between ">
+              <div className="flex justify-between items-center">
                 <div>
                   <img
                     onClick={() => setSelected(model.id)}
@@ -43,8 +43,12 @@ export const SiderInfo: FC<SiderInfoProps> = ({ models, setSelected }) => {
                 </div>
                 <div>
                   <div className="flex justify-between">
-                    <span className="font-semibold mr-2">Isc:</span> {model.isc}
-                    A
+                    <span className="font-semibold mr-2">Isc:</span>
+                    {model.isc}A
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold mr-2">Imp:</span>
+                    {model.imp}A
                   </div>
                   <div className="flex justify-between">
                     <span className="font-semibold mr-2">PVEff: </span>
@@ -55,8 +59,13 @@ export const SiderInfo: FC<SiderInfoProps> = ({ models, setSelected }) => {
                     {model.peak_generation_factor}%
                   </div>
                   <div className="flex justify-between">
+                    <span className="font-semibold mr-2">Watts:</span>
+                    {model.power_rating}W
+                  </div>
+
+                  <div className="flex justify-between">
                     <a
-                      className="font-semibold mr-2"
+                      className="font-semibold mr-2 text-xs hover:text-red-400"
                       target="_blank"
                       href={model.plan_file}
                     >

@@ -39,6 +39,7 @@ export interface ILoadProfile {
 export interface SolarModel {
   id: string | number
   image: string
+  imp: string
   isc: string
   pveff: string
   power_rating: number

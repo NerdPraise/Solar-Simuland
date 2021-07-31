@@ -37,9 +37,14 @@
 
 .cardSize {
   min-height: 300px;
+  border-radius: 5px;
 }
 
 .imageextra {
   max-height: 100px;
   max-width: 85%;
+}
+
+.extraSides .ant-collapse {
+  background-color: white;
 }

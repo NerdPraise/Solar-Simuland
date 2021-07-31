@@ -161,15 +161,7 @@ export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
           <Col className="mt-9" sm={{ span: 12 }} md={{ span: 6 }}>
             <div>
               <p className="font-bold">Battery Sizing</p>
-              <p>
-                {batterySize.toFixed(2)} W
-                <Tooltip
-                  className="ml-2"
-                  title="Adjust DOA to get battery size"
-                >
-                  <QuestionCircleOutlined size={1} />
-                </Tooltip>
-              </p>
+              <p>{batterySize.toFixed(2)} W</p>
               <small className="text-gray-300">
                 Depth of discharge is taken at 85%
               </small>
@@ -190,7 +182,10 @@ export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
             <div className="inverter-sizing">
               <p className="font-bold">Inverter Sizing</p>
               <div className="mb-3">
-                <Input name="batterySize" value={inverterSize.toFixed(2)} />
+                <Input
+                  name="inverterSize"
+                  value={`${inverterSize.toFixed(2)} W`}
+                />
               </div>
               <div className="font-semibold flex mb-2">
                 <span>Compensation</span>
@@ -216,7 +211,7 @@ export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
           <Card className="h-full cardSize">
             <div className="battery-sizing">
               <p className="font-bold">Battery Sizing</p>
-              <Input name="batterySize" value={batterySize.toFixed(2)} />
+              <Input name="batterySize" value={`${batterySize.toFixed(2)} W`} />
               <div className="mt-4">
                 <Row justify="space-between">
                   <Col>
@@ -348,6 +343,110 @@ export const GeneratedInfoContent: FC<GeneratedInfoProps> = ({
                   <button>Select PV Module</button>
                 </div>
               )}
+            </div>
+          </Card>
+        </Col>
+      </Row>
+      <Row className="mt-9" justify="space-between">
+        <Col sm={{ span: 11 }} md={{ span: 7 }}>
+          <Card className="h-full cardSize">
+            <div className="controller-sizing">
+              <p className="font-bold">
+                Controller Sizing (PWM)
+                <QuestionTooTip text="Pulse Width Modulation controller" />
+              </p>
+              <div className="mb-3">
+                <Input
+                  name="inverterSize"
+                  value={`${(arraySize * Number(selectedModel?.imp)).toFixed(
+                    2
+                  )} W`}
+                />
+              </div>
+              <div className="flex mb-2 text-xs">
+                <pre>
+                  CCr = Nsp × Imp <br />
+                  Where: CCr = PWM charge controller rating <br />
+                  Nsp = Number of strings in parallel <br />
+                  Imp = Maximum power current of the PV array
+                </pre>
+              </div>
+            </div>
+          </Card>
+        </Col>
+
+        <Col sm={{ span: 11 }} md={{ span: 7 }}>
+          <Card className="h-full cardSize">
+            <div className="inverter-sizing">
+              <p className="font-bold">Controller Sizing (MPPT)</p>
+              <div className="mb-3">
+                <Input
+                  name="inverterSize"
+                  value={`${inverterSize.toFixed(2)} W`}
+                />
+              </div>
+              <div className="font-semibold flex mb-2">
+                <span>Compensation</span>
+                <QuestionTooTip text="Select inverter compensation" />
+              </div>
+
+              <Radio.Group
+                onChange={(e) => setInverterRange(e.target.value)}
+                value={inverterRange}
+              >
+                <Space direction="vertical">
+                  <Radio value={0.25}>25%</Radio>
+                  <Radio value={0.27}>27%</Radio>
+                  <Radio value={0.3}>30%</Radio>
+                </Space>
+              </Radio.Group>
+              <div></div>
+            </div>
+          </Card>
+        </Col>
+
+        <Col sm={{ span: 11 }} md={{ span: 7 }}>
+          <Card className="h-full cardSize">
+            <div className="inverter-sizing">
+              <p className="font-bold">Cable Sizing</p>
+              <div className="mb-3">
+                <div className="flex">
+                  <p>Maximum current value (PV Circuits)</p>
+                  <QuestionTooTip text="PV Circuits have varying current levels" />
+                </div>
+                <Input
+                  name="pvcircuits"
+                  value={`${Math.ceil(
+                    arraySize * 1.25 * Number(selectedModel?.isc)
+                  )} A`}
+                />
+                <div className="flex">
+                  <p>Maximum current value (Non PV Circuits)</p>
+                  <QuestionTooTip text="Non PV Circuits do not have varying current levels because of irradiance" />
+                </div>
+                <Input
+                  name="non-pvcircuits"
+                  value={`${Math.ceil(
+                    arraySize * 1.25 * Number(selectedModel?.isc)
+                  )} A`}
+                />
+              </div>
+              <div className="font-semibold flex mb-2">
+                <span>Compensation</span>
+                <QuestionTooTip text="Select inverter compensation" />
+              </div>
+
+              <Radio.Group
+                onChange={(e) => setInverterRange(e.target.value)}
+                value={inverterRange}
+              >
+                <Space direction="vertical">
+                  <Radio value={0.25}>25%</Radio>
+                  <Radio value={0.27}>27%</Radio>
+                  <Radio value={0.3}>30%</Radio>
+                </Space>
+              </Radio.Group>
+              <div></div>
             </div>
           </Card>
         </Col>
